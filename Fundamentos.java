@@ -13,8 +13,7 @@ import java.text.DecimalFormat;
 public class Fundamentos {
 	static double temp1 = 0;
 	static double temp2 = 0;
-	static double temp3 = 0;
-	static double temp4 = 0;
+	static String coordenadas [] = new String[2];
 	
 	public static void main(String[] args) {
 		
@@ -63,19 +62,21 @@ public class Fundamentos {
 		catch(IOException e){System.out.println(e.toString());}
 	}
 	
-	static void escreve_PU(String coord1, String coord2){
+	static void escreve_PU(String coordX, String coordY){
 		try{
 			FileWriter fw = new FileWriter("D:/Workspace_Eclipse/fundamentosRobotica/src/fundamentosRobotica/posicao.txt", true);
 			BufferedWriter bw = new BufferedWriter(fw);
 
-			int num1 =  Integer.parseInt(coord1);
-			int num2 = Integer.parseInt(coord2);
-			double number1 = num1/40.0;
-			String coordenada1 = precisao(number1);
-			double number2 = num2/40.0;
-			String coordenada2 = precisao(number2);
+			int numX =  Integer.parseInt(coordX);
+			int numY = Integer.parseInt(coordY);
 
-			System.out.println("MoveJ Offs (P0, " + coordenada1 + "," + coordenada2 + ", 20), V1000, z0, tool0;");
+			double numberX = converte(numX);
+			double numberY = converte(numY);
+
+			String coordenadaX = precisao(numberX);			
+			String coordenadaY = precisao(numberY);
+
+			System.out.println("MoveJ Offs (P0, " + coordenadaX + "," + coordenadaY + ", 20), V1000, z0, tool0;");
 			bw.write("MoveJ Offs (P0, " + coordenada1 + "," + coordenada2 + ", 20), V1000, z0, tool0;");
 			bw.newLine();
 
@@ -91,18 +92,16 @@ public class Fundamentos {
 			FileWriter fw = new FileWriter("D:/Workspace_Eclipse/fundamentosRobotica/src/fundamentosRobotica/posicao.txt", true);
 			BufferedWriter bw = new BufferedWriter(fw);
 			
-			int num1 =  Integer.parseInt(n1);
-			int num2 = Integer.parseInt(n2);
-			double number1 = (num1/40.0);
-			double number2 = (num2/40.0);
+			int numX =  Integer.parseInt(n1);
+			int numY = Integer.parseInt(n2);
+			double number1 = converte(numX);
+			double number2 = converte(numY);
 			
-			//criar função resolução
-			String [2] coordenadas = resolução(number1, number2);
+			coordenadas = resolução(number1, number2);
 
 			System.out.println("MoveL Offs (P0," + coordenadas[1] + "," + coordenadas[2] + ", 0), V1000, z0, tool0;");
 				bw.write("MoveL Offs (P0, " + coordenadas[1] + "," + coordenadas[2] + ", 0), V1000, z0, tool0;");
-				bw.newLine();
-				
+				bw.newLine();				
 			
 			bw.close();
 			fw.close();
@@ -110,7 +109,7 @@ public class Fundamentos {
 		catch (IOException ex) {ex.printStackTrace();}
 	}
 	
-	//Função ajusta quantas casas decimais tera a coordenada
+	//Função ajusta quantas casas decimais terá as coordenadas
 	static String precisao(double number)
 	{
 		DecimalFormat df = new DecimalFormat("0.#");
@@ -121,20 +120,26 @@ public class Fundamentos {
 	}
 
 	//Função ajusta a distancia entre cada ponto para aumentar ou diminuir a resolução do desenho
-	static double resolucao(double number1, double number2)
+	static String resolucao(double number1, double number2)
 	{
-		if(Math.abs(temp1-number1) > 0.5 || Math.abs(temp2-number2) > 0.5){
+		if(Math.abs(temp1-number1) > 0.5 || Math.abs(temp2-number2) > 0.5)
+		{
 				temp1 = number1;
 				temp2 = number2;
-				temp3 = number1;
-				temp4 = number2;
 				String numero1 = precisao(number1);
 				String numero2 = precisao(number2);
 
-				String [2] coordenadas = [numero1 + number2];
-				
+				coordenadas = [numero1 + number2];				
 			}
 		return (coordenadas);
+	}
+
+	//Função para conversão de pixels para milímetros
+	static converte(double numero)
+	{
+		double numeroConvertido =(numero/40.0);
+
+		return(numeroConvertido);
 	}
 }
 
